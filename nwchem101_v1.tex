@@ -30,32 +30,32 @@ The document (101) introduces the molecular quantum chemistry capability of NWCh
 
 Figure \ref{fig:WaterSimple} is a basis NWChem input file which introduces a number of key elements.  The important input elements are described briefly in Table~\ref{tab:BasicInput}.
 
+The \texttt{echo} should be considered essentially since it is the best way to prevent data rot.  It is common to modify input files throughout a project, thus the only way to preserve the exact settings used for a given calculation is to retain the input file with the corresponding output.  It is tedious to extract the original input settings from the output file, and in some circumstances, these may not be available at all (e.g. when \texttt{print low} or \texttt{print none} are used).
+
+The \texttt{start} directive is also essentially since it controls the names of files that NWChem will create.  It is critical that the RTDB file be unique, as running two jobs simultaneously with the same prefix will frequently result in an error or incorrect behavior.  Using \texttt{title} is optional and less useful than \texttt{echo} with a commented input file.
+
+Comments can be introduced to input files using the \texttt{\#} symbol.  These comments will be echoed along with the rest of the input file.  One can comment after a regular input line as demonstrated in the example above.  Suggested comments include: (1) a description of where the input geometry came from (e.g. ``this is the B3LYP/6-31G optimized geometry''), (2) the citation output from the EMSL Basis Set Exchange (\texttt{bse.pnl.gov}), when this is the source of the basis set input, and (3) annotation of undocumented options users, system-specific paramters and \texttt{set} directives (described in Section~\ref{sec:SetDirectives}).
+
 \begin{figure}
     \caption{A very simple input file.}
     \label{fig:WaterSimple}
     \begin{verbatim}
  1   echo
- 2
- 3   start water
- 4 
- 5   title "a simple calculation of water"
- 6
- 7   # COMMENT: these options are system specific
- 8   memory total 2000 mb
- 9   permanent_dir /home/jeff/scratch/nwchem
-10   scratch_dir /home/jeff/scratch/nwchem
-11
-12   geometry angstroms # angstroms are the default units
-13     O   0.00000000  0.00000000   0.11726921
-14     H   0.75698224  0.00000000  -0.46907685
-15     H  -0.75698224  0.00000000  -0.46907685
-16   end
-17
-18   basis
-19   * library 6-31G*
-20   end
-21
-22   task scf energy
+ 2   start water
+ 3   title "a simple calculation of water"
+ 4   # COMMENT: these options are system specific
+ 5   memory total 2000 mb
+ 6   permanent_dir /home/jeff/scratch/nwchem
+ 7   scratch_dir /home/jeff/scratch/nwchem
+ 8   geometry angstroms # angstroms are the default units
+ 9     O   0.00000000  0.00000000   0.11726921
+10     H   0.75698224  0.00000000  -0.46907685
+11     H  -0.75698224  0.00000000  -0.46907685
+12   end
+13   basis
+14   * library 6-31G*
+15   end
+16   task scf energy
     \end{verbatim}
 \end{figure}
 
@@ -66,25 +66,19 @@ Figure \ref{fig:WaterSimple} is a basis NWChem input file which introduces a num
         \hline\hline
         directive               & line  & purpose \\
         \hline
-        \texttt{echo}           & 1     & prints the input file to output stream \\
-        \texttt{start}          & 3     & initializes the RTDB and other files using given prefix \\
-        \texttt{title}          & 5     & this title will be printed with each module's output \\
-        \texttt{\#}             & 7, 12 & stops parsing at the \texttt{\#} symbol \\
-        \texttt{memory}         & 8     & configures memory usage \\
-        \texttt{permanent\_dir} & 9     & the directory where persistent files will be stored \\
-        \texttt{scratch\_dir}   & 10    & the directory where scratch files will be stored \\
-        \texttt{geometry}       & 12    & input block for the molecular geometry \\
-        \texttt{basis}          & 18    & input block for the basis set \\
-        \texttt{task}           & 22    & NWChem will execute the directive given here \\
+        \texttt{echo}           & 1   & prints the input file to output stream \\
+        \texttt{start}          & 2   & initializes the RTDB and other files using given prefix \\
+        \texttt{title}          & 3   & this title will be printed with each module's output \\
+        \texttt{\#}             & 4,8 & stops parsing at the \texttt{\#} symbol \\
+        \texttt{memory}         & 5   & configures memory usage \\
+        \texttt{permanent\_dir} & 6   & the directory where persistent files will be stored \\
+        \texttt{scratch\_dir}   & 7   & the directory where scratch files will be stored \\
+        \texttt{geometry}       & 8   & input block for the molecular geometry \\
+        \texttt{basis}          & 13  & input block for the basis set \\
+        \texttt{task}           & 16  & NWChem will execute the directive given here \\
         \hline\hline
     \end{tabular}
 \end{table}
-
-The \texttt{echo} should be considered essentially since it is the best way to prevent data rot.  It is common to modify input files throughout a project, thus the only way to preserve the exact settings used for a given calculation is to retain the input file with the corresponding output.  It is tedious to extract the original input settings from the output file, and in some circumstances, these may not be available at all (e.g. when \texttt{print low} or \texttt{print none} are used).
-
-The \texttt{start} directive is also essentially since it controls the names of files that NWChem will create.  It is critical that the RTDB file be unique, as running two jobs simultaneously with the same prefix will frequently result in an error or incorrect behavior.  Using \texttt{title} is optional and less useful than \texttt{echo} with a commented input file.
-
-Comments can be introduced to input files using the \texttt{\#} symbol.  These comments will be echoed along with the rest of the input file.  One can comment after a regular input line as demonstrated in the example above.  Suggested comments include: (1) a description of where the input geometry came from (e.g. ``this is the B3LYP/6-31G optimized geometry''), (2) the citation output from the EMSL Basis Set Exchange (\texttt{bse.pnl.gov}), when this is the source of the basis set input, and (3) annotation of undocumented options users, system-specific paramters and \texttt{set} directives (described in Section~\ref{sec:SetDirectives}).
 
 \newpage
 
