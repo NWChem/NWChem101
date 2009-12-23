@@ -30,7 +30,7 @@ The document (101) introduces the molecular quantum chemistry capability of NWCh
 
 Figure \ref{fig:WaterSimple} is a basis NWChem input file which introduces a number of key elements.  The important input elements are described briefly in Table~\ref{tab:BasicInput}.
 
-The \texttt{echo} should be considered essentially --- it is the best way to prevent data rot.  It is common to modify input files throughout a project, thus the only way to preserve the exact settings used for a given calculation is to retain the input file with the corresponding output.  It is tedious to extract the original input settings from the output file, and in some circumstances, these may not be available at all (e.g. when \texttt{print low} or \texttt{print none} are used).
+The \texttt{echo} directive should be considered essential --- it is the best way to prevent data rot.  It is common to modify input files throughout a project, thus the only way to preserve the exact settings used for a given calculation is to retain the input file with the corresponding output.  It is tedious to extract the original input settings from the output file, and in some circumstances, these may not be available at all (e.g. when \texttt{print low} or \texttt{print none} are used).
 
 The \texttt{start} directive is also essentially since it controls the names of files that NWChem will create.  It is critical that the RTDB file be unique, as running two jobs simultaneously with the same prefix will frequently result in an error or incorrect behavior.  Using \texttt{title} is optional and less useful than \texttt{echo} with a commented input file.
 
@@ -121,7 +121,7 @@ The UM is an excellent resource for the geometry input block so we will not elab
 \end{figure}
 
 \begin{figure}
-    \caption{Geometry intput for hexafluorobenzene using the zmatrix format.}
+    \caption{Geometry input for hexafluorobenzene using the zmatrix format.}
     \label{fig:HexafluorobenzeneZMatrix}
     \begin{verbatim}
  1   geometry units bohr
@@ -185,6 +185,8 @@ We will see later that one can name basis sets arbitrarily and swap them as need
 
 The full scope of options for the \texttt{task} directive are documented in UM 5.10.1, but we review the basic options here.  The format of the \texttt{task} directive is ``\texttt{task <theory> <operation>}'' such as ``\texttt{task scf frequencies}'' or ``\texttt{task mp2 optimize}.''  Analytic gradients and frequencies are not available for all methods, so one should be careful not to request these operations for such methods if numerical derivatives are undesirable.
 
+In multi-task input files (see Section~\ref{sec:MultipleTasks} for details) it is often desirable to continue the calculation despite the failure of one task.  This can be effected by adding \texttt{ignore} to the end of the task input line.
+
 \begin{table}[!hp]
     \label{tab:TaskOptions}
     \caption{A list of operations which are efficient (i.e. do not use numerical derivatives) for popular methods.  Notation: E=energy, G=gradients (geometry optimization), H=hessian (vibrational frequencies).  The availability of open-shell variants and excited-states are also listed.}
@@ -210,9 +212,62 @@ The full scope of options for the \texttt{task} directive are documented in UM 5
 
 \section{Basic Input Files}\label{sec:BasisInputFiles}
 
+A number of non-trivial examples of various capability are presented in this section.
+
 \newpage
 
-\subsection{Hartree-Fock (SCF)}\label{sec:HartreeFock}
+\subsection{Hartree-Fock (HF)}\label{sec:HartreeFock}
+
+There are a variety of ways to run a Hartree-Fock calculation in NWChem.  Both the SCF module \textit{and} the DFT module can perform a Hartree-Fock (HF) calculation.  As the solvers in the two modules are different, the distinction between the two modules for HF is non-trivial.  Other critical aspects of the HF input are the initial guess and the storage of two-electron integrals.  A good initial guess will reduce the number of iterations dramatically, which is critical for when the two-electron integrals must be recomputed each iteration (the direct method).  In the semidirect approach, integrals may be cached in memory, on disk, or both, and the storage used for each is controlled by the user.
+
+The various ways to run HF will be presented as extensions to the input file in Figure~\ref{fig:WaterSimple}, so line numbers will start at 16.
+
+\begin{figure}
+%     \caption{A very simple input file.}
+    \label{fig:DirectSCF}
+    \begin{verbatim}
+16  scf
+17    direct
+18  end
+19  task scf energy
+    \end{verbatim}
+\end{figure}
+
+\begin{figure}
+%     \caption{A very simple input file.}
+    \label{fig:DirectDFT}
+    \begin{verbatim}
+16  dft
+17    xc HFexch
+18    direct
+19  end
+20  task dft energy
+    \end{verbatim}
+\end{figure}
+
+\begin{figure}
+%     \caption{A very simple input file.}
+    \label{fig:SemidirectSCF1}
+    \begin{verbatim}
+16  scf
+17    # use 100MW = 800 MB of memory for caching integrals
+18    semidirect memsize 100000000 filesize 0 
+19  end
+20  task scf energy
+    \end{verbatim}
+\end{figure}
+
+\begin{figure}
+%     \caption{A very simple input file.}
+    \label{fig:SemidirectSCF2}
+    \begin{verbatim}
+16  scf
+17    # use 100MW = 400 MB of memory and 8 GB of disk for caching integrals
+18    semidirect memsize 50000000 filesize 1000000000
+19  end
+20  task scf energy
+    \end{verbatim}
+\end{figure}
 
 \newpage
 
@@ -229,6 +284,10 @@ The full scope of options for the \texttt{task} directive are documented in UM 5
 \newpage
 
 \subsection{Multi-Configuration SCF (MCSCF)}\label{sec:MultiConfigurationSCF}
+
+\newpage
+
+\subsection{Computing Molecular Properties}\label{sec:MolecularProperties}
 
 \newpage
 
